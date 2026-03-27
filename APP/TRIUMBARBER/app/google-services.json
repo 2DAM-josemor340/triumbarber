@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "610741069604",
+    "project_id": "triumbarber-5fcc8",
+    "storage_bucket": "triumbarber-5fcc8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610741069604:android:a88f87b52aa34df13af5b1",
+        "android_client_info": {
+          "package_name": "com.triumbarber"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcD8w4SBgQ_d4XCekEK7riS_hNcdJXANY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

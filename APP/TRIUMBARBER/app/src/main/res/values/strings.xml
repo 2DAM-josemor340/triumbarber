@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">TriumBarber</string>
+
+    <string name="login_title">Iniciar Sesión</string>
+    <string name="register_title">Crear Cuenta</string>
+    <string name="email_hint">Correo electrónico</string>
+    <string name="password_hint">Contraseña</string>
+
+    <string name="select_barber_title">Selecciona a tu barbero</string>
+    <string name="barber_fermin">FERMÍN</string>
+    <string name="barber_josemaria">JOSEMARÍA</string>
+
+    <string name="admin_panel_title">PANEL DE CONTROL</string>
+    <string name="admin_logout">SALIR</string>
+    <string name="search_hint">Buscar cliente por email...</string>
+    <string name="filter_all">TODOS</string>
+    <string name="counter_text">Citas encontradas: %1$d</string>
+
+    <string name="dialog_cancel_title">Anular Cita</string>
+    <string name="dialog_cancel_msg">¿Deseas eliminar la cita y avisar al cliente (%1$s)?</string>
+    <string name="btn_notify">SÍ, AVISAR</string>
+    <string name="btn_only_delete">SOLO ELIMINAR</string>
+    <string name="btn_back">VOLVER</string>
+
+    <string name="email_subject_cancel">Cita Cancelada - TriumBarber</string>
+    <string name="email_subject_modify">Cambio en tu cita - TriumBarber</string>
+    <string name="email_body_cancel">Hola, le informamos que su cita del día %1$s a las %2$s ha sido cancelada por el barbero.</string>
+    <string name="email_body_modify">Hola, su cita ha sido MODIFICADA.\nNueva fecha: %1$s\nNueva hora: %2$s\nBarbero: %3$s</string>
+
+    <string name="error_fields_empty">Por favor, rellena todos los campos</string>
+    <string name="error_no_email">El cliente no tiene email registrado</string>
+    <string name="success_register">Cuenta creada con éxito</string>
+    <string name="loading_citas">Cargando citas...</string>
+</resources>

@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.TriumBarber" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#D4AF37</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="android:windowBackground">#1A1A1A</item>
+        <item name="android:statusBarColor">#121212</item>
+    </style>
+
+    <style name="Theme.TriumBarber" parent="Base.Theme.TriumBarber" />
+
+    <style name="CircleImage">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="TextoPanelAdmin">
+        <item name="android:textColor">#D4AF37</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>
