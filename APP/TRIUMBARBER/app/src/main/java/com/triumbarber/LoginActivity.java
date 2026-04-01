@@ -15,7 +15,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private Button btnLogin;
-    private TextView tvOlvidePassword, tvRegistro;
+    private TextView tvRegistro;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -30,6 +30,11 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmailLogin);
         etPassword = findViewById(R.id.etPasswordLogin);
         btnLogin = findViewById(R.id.btnLogin);
+        tvRegistro = findViewById(R.id.tvIrARegistro);
+
+        tvRegistro.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegistroActivity.class));
+        });
 
         btnLogin.setOnClickListener(v -> loginUsuario());
     }
@@ -42,5 +47,28 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                verificarRolUsuario();
+            } else {
+                Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void verificarRolUsuario() {
+        String uid = mAuth.getCurrentUser().getUid();
+        db.collection("usuarios").document(uid).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                String rol = documentSnapshot.getString("rol");
+                if ("admin".equals(rol)) {
+                    startActivity(new Intent(LoginActivity.this, AdminPanelActivity.class));
+                } else {
+                    startActivity(new Intent(LoginActivity.this, SeleccionBarberoActivity.class));
+                }
+                finish();
+            }
+        });
     }
 }

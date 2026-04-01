@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#222222"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvTituloBarbero"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cita con:"
+        android:textColor="#D4AF37"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/layoutCambioBarbero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="15dp">
+
+    </LinearLayout>
+
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="20dp"
+        android:theme="@style/Theme.AppCompat.Light"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selecciona una hora (intervalos de 30 min):"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:layout_marginBottom="10dp"
+        android:textStyle="italic"/>
+
+    <GridView
+        android:id="@+id/gridHoras"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:numColumns="4"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/btnConfirmarCita"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="CONFIRMAR CITA"
+        android:backgroundTint="#D4AF37"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"/>
+
+</LinearLayout>

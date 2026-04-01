@@ -59,5 +59,14 @@
         app:cornerRadius="8dp" />
 
 
+    <TextView
+        android:id="@+id/tvIrARegistro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:padding="8dp"
+        android:text="¿No tienes cuenta? Regístrate aquí"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
 
 </LinearLayout>
