@@ -10,12 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-
 public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private Button btnLogin;
-    private TextView tvRegistro;
+    private TextView tvOlvidePassword, tvRegistro;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -30,7 +29,12 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmailLogin);
         etPassword = findViewById(R.id.etPasswordLogin);
         btnLogin = findViewById(R.id.btnLogin);
+        tvOlvidePassword = findViewById(R.id.tvOlvidePassword);
         tvRegistro = findViewById(R.id.tvIrARegistro);
+
+        tvOlvidePassword.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RecuperaPasswordActivity.class));
+        });
 
         tvRegistro.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, RegistroActivity.class));

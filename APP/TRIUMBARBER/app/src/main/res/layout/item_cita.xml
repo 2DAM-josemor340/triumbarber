@@ -14,23 +14,14 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txtFechaHoraItem"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/txtFechaHoraItem"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="01/03/2026 - 10:00"
-                android:textColor="#D4AF37"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
+            android:text="01/03/2026 - 10:00"
+            android:textColor="#D4AF37"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtBarberoItem"
@@ -56,12 +47,47 @@
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
 
+        <TextView
+            android:id="@+id/txtEmailClienteItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="cliente@email.com"
+            android:textColor="#AAAAAA"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/txtTelefonoClienteItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tel: 600000000"
+            android:textColor="#AAAAAA"
+            android:textSize="13sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:gravity="end"
             android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnModificarCita"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MODIFICAR"
+                android:textColor="#D4AF37"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnAnularCita"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="ANULAR"
+                android:textColor="#FF4444"
+                android:textSize="12sp" />
 
         </LinearLayout>
 

@@ -71,6 +71,7 @@ public class RegistroActivity extends AppCompatActivity {
                         db.collection("usuarios").document(uid).set(user)
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(RegistroActivity.this, "¡Registro completado!", Toast.LENGTH_SHORT).show();
+
                                     Intent intent = new Intent(RegistroActivity.this, SeleccionBarberoActivity.class);
                                     startActivity(intent);
                                     finish();

@@ -1,21 +1,14 @@
 package com.triumbarber;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.GridView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -29,8 +22,7 @@ public class CalendarioActivity extends AppCompatActivity {
 
     private CalendarView calendarView;
     private GridView gridHoras;
-    private TextView tvTituloBarbero;
-    private String barberoSeleccionado, citaIdExistente;
+    private String barberoSeleccionado, citaIdExistente, motivoCambio;
     private String fechaSeleccionada = "", horaSeleccionada = "";
     private int diaSemanaSeleccionado;
     private FirebaseFirestore db;
@@ -47,12 +39,10 @@ public class CalendarioActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         calendarView = findViewById(R.id.calendarView);
         gridHoras = findViewById(R.id.gridHoras);
-        tvTituloBarbero = findViewById(R.id.tvTituloBarbero);
 
         barberoSeleccionado = getIntent().getStringExtra("BARBERO_SELECCIONADO");
         citaIdExistente = getIntent().getStringExtra("CITA_ID");
-
-        configurarSelectorBarberos();
+        motivoCambio = getIntent().getStringExtra("MOTIVO_CAMBIO");
 
         calendarView.setMinDate(System.currentTimeMillis() - 1000);
         cargarFestivos2026();
@@ -63,20 +53,6 @@ public class CalendarioActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btnConfirmarCita).setOnClickListener(v -> validarYGuardarCita());
-    }
-
-    private void configurarSelectorBarberos() {
-        List<String> barberos = new ArrayList<>();
-        barberos.add("Fermín");
-        barberos.add("Josemaría");
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, barberos);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        if (barberoSeleccionado != null) {
-            int pos = barberos.indexOf(barberoSeleccionado);
-            tvTituloBarbero.setText("Cita con: " + barberoSeleccionado);
-        }
     }
 
     private void cargarFestivos2026() {
@@ -148,56 +124,30 @@ public class CalendarioActivity extends AppCompatActivity {
     }
 
     private void validarYGuardarCita() {
-        if (fechaSeleccionada.isEmpty()) {
-            Toast.makeText(this, "Selecciona una fecha en el calendario", Toast.LENGTH_SHORT).show();
-            return;
-        }
         if (horaSeleccionada.isEmpty()) {
             Toast.makeText(this, "Selecciona una hora", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // REGLA 1: Solo una cita al día por usuario
         db.collection("citas")
-                .whereEqualTo("clienteId", mAuth.getUid())
+                .whereEqualTo("barbero", barberoSeleccionado)
                 .whereEqualTo("fecha", fechaSeleccionada)
-                .get().addOnCompleteListener(taskUser -> {
-                    if (taskUser.isSuccessful() && taskUser.getResult() != null) {
-                        boolean yaTieneCitaEseDia = false;
-                        for (QueryDocumentSnapshot doc : taskUser.getResult()) {
+                .whereEqualTo("hora", horaSeleccionada)
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        boolean ocupada = false;
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
                             if (citaIdExistente == null || !doc.getId().equals(citaIdExistente)) {
-                                yaTieneCitaEseDia = true;
+                                ocupada = true;
                                 break;
                             }
                         }
-
-                        if (yaTieneCitaEseDia) {
-                            Toast.makeText(this, "Ya tienes una cita reservada para este día. Solo se permite una por día.", Toast.LENGTH_LONG).show();
-                            return;
+                        if (ocupada) {
+                            Toast.makeText(this, "¡Error! Esta hora se acaba de ocupar.", Toast.LENGTH_LONG).show();
+                            consultarDisponibilidadBarbero(fechaSeleccionada);
+                        } else {
+                            ejecutarGuardado();
                         }
-
-                        // REGLA 2: No duplicar cita con el mismo barbero y hora (Doble comprobación antes de guardar)
-                        db.collection("citas")
-                                .whereEqualTo("barbero", barberoSeleccionado)
-                                .whereEqualTo("fecha", fechaSeleccionada)
-                                .whereEqualTo("hora", horaSeleccionada)
-                                .get().addOnCompleteListener(taskBarber -> {
-                                    if (taskBarber.isSuccessful() && taskBarber.getResult() != null) {
-                                        boolean ocupada = false;
-                                        for (QueryDocumentSnapshot doc : taskBarber.getResult()) {
-                                            if (citaIdExistente == null || !doc.getId().equals(citaIdExistente)) {
-                                                ocupada = true;
-                                                break;
-                                            }
-                                        }
-                                        if (ocupada) {
-                                            Toast.makeText(this, "¡Error! Esta hora se acaba de ocupar con este barbero.", Toast.LENGTH_LONG).show();
-                                            consultarDisponibilidadBarbero(fechaSeleccionada);
-                                        } else {
-                                            ejecutarGuardado();
-                                        }
-                                    }
-                                });
                     }
                 });
     }
@@ -214,15 +164,9 @@ public class CalendarioActivity extends AppCompatActivity {
             c.put("estado", "Pendiente");
 
             if (citaIdExistente != null) {
-                db.collection("citas").document(citaIdExistente).update(c).addOnSuccessListener(a -> {
-                    Toast.makeText(this, "Cita modificada con éxito", Toast.LENGTH_SHORT).show();
-                    finish();
-                });
+                db.collection("citas").document(citaIdExistente).update(c).addOnSuccessListener(a -> finish());
             } else {
-                db.collection("citas").add(c).addOnSuccessListener(a -> {
-                    Toast.makeText(this, "Cita reservada con éxito", Toast.LENGTH_SHORT).show();
-                    finish();
-                });
+                db.collection("citas").add(c).addOnSuccessListener(a -> finish());
             }
         });
     }

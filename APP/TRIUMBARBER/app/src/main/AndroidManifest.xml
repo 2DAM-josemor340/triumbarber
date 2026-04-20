@@ -3,6 +3,8 @@
     package="com.triumbarber">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
 
     <application
         android:allowBackup="true"
@@ -13,18 +15,22 @@
         android:theme="@style/Theme.TriumBarber">
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".LoginActivity" />
         <activity android:name=".RegistroActivity" />
+        <activity android:name=".RecuperaPasswordActivity" android:label="Recuperar Contraseña" />
         <activity android:name=".SeleccionBarberoActivity" />
         <activity android:name=".CalendarioActivity" />
         <activity android:name=".AdminPanelActivity" />
-
+        <activity android:name=".HistoricoActivity" />
+        <activity android:name=".ConfirmacionActivity" />
 
     </application>
 

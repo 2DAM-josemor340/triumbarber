@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="MI HISTORIAL"
+            android:textColor="#D4AF37"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnVolverHistorico"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#333333"
+            android:text="VOLVER"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            app:cornerRadius="8dp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/layoutHeader"
+        android:background="#444444"
+        android:layout_marginBottom="10dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHistorico"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/divider"
+        android:clipToPadding="false"
+        android:paddingBottom="20dp"
+        tools:listitem="@layout/item_cita" />
+
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No tienes citas registradas"
+        android:textColor="#666666"
+        android:visibility="gone" />
+
+</RelativeLayout>
