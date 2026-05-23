@@ -13,12 +13,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class HistoricoActivity extends AppCompatActivity {
 
     private RecyclerView rvHistorico;
     private CitaAdapter adapter;
     private List<Cita> listaCompleta = new ArrayList<>();
     private FirebaseFirestore db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +45,8 @@ public class HistoricoActivity extends AppCompatActivity {
 
         db.collection("citas")
                 .whereEqualTo("clienteId", uid)
-                .orderBy("fecha", Query.Direction.DESCENDING)
-                .orderBy("hora", Query.Direction.DESCENDING)
+                .orderBy("fecha", Query.Direction.ASCENDING)
+                .orderBy("hora", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     listaCompleta.clear();

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NUEVA CITA TELEFÓNICA"
+            android:textColor="#D4AF37"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"/>
+
+        <EditText
+            android:id="@+id/etNombreTel"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Nombre"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_input"
+            android:paddingStart="15dp"
+            android:layout_marginBottom="12dp"
+            android:inputType="textPersonName"/>
+
+        <EditText
+            android:id="@+id/etApellidosTel"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Apellidos"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_input"
+            android:paddingStart="15dp"
+            android:layout_marginBottom="12dp"
+            android:inputType="textPersonName"/>
+
+        <EditText
+            android:id="@+id/etDNITel"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="DNI"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_input"
+            android:paddingStart="15dp"
+            android:layout_marginBottom="12dp"
+            android:inputType="textCapCharacters"/>
+
+        <EditText
+            android:id="@+id/etTelefonoTel"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Teléfono móvil"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_input"
+            android:paddingStart="15dp"
+            android:layout_marginBottom="12dp"
+            android:inputType="phone"/>
+
+        <EditText
+            android:id="@+id/etEmailTel"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Correo electrónico (Opcional)"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_input"
+            android:paddingStart="15dp"
+            android:layout_marginBottom="30dp"
+            android:inputType="textEmailAddress"/>
+
+        <Button
+            android:id="@+id/btnContinuarCitaTel"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="CONTINUAR AL CALENDARIO"
+            android:backgroundTint="#D4AF37"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+
+        <Button
+            android:id="@+id/btnVolverAdmin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VOLVER"
+            android:backgroundTint="#444444"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="20dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+    </LinearLayout>
+</ScrollView>

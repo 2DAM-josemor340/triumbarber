@@ -14,14 +14,34 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/txtFechaHoraItem"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="01/03/2026 - 10:00"
-            android:textColor="#D4AF37"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/txtFechaHoraItem"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="01/03/2026 - 10:00"
+                android:textColor="#D4AF37"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtEstadoItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PENDIENTE"
+                android:background="#444444"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/txtBarberoItem"
@@ -32,6 +52,16 @@
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/txtServicioItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Servicio: Corte"
+            android:textColor="#D4AF37"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
@@ -63,12 +93,34 @@
             android:textColor="#AAAAAA"
             android:textSize="13sp" />
 
+        <TextView
+            android:id="@+id/txtNotasItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Nota: Ejemplo de nota"
+            android:textColor="#D4AF37"
+            android:textSize="13sp"
+            android:textStyle="italic"
+            android:visibility="gone"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:gravity="end"
             android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnHechoCita"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HECHO"
+                android:textColor="#4CAF50"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnModificarCita"

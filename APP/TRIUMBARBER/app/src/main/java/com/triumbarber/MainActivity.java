@@ -10,10 +10,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         new Handler(Looper.getMainLooper()).postDelayed(this::verificarSesion, 2000);
     }
+
 
     private void verificarSesion() {
         FirebaseUser currentUser = mAuth.getCurrentUser();

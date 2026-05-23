@@ -1,33 +1,40 @@
 package com.triumbarber;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 public class AdminPanelActivity extends AppCompatActivity implements CitaAdapter.OnCitaListener {
 
     private RecyclerView rvAdmin;
     private CitaAdapter adapter;
-    private List<Cita> listaCitas = new ArrayList<>();
+    private List<Cita> listaCitasOriginal = new ArrayList<>();
+    private List<Cita> listaCitasMostrada = new ArrayList<>();
     private FirebaseFirestore db;
     private TextView tvContador, tvTituloEstado;
     private String barberoFiltrado = null;
+    private String adminNombre = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +44,11 @@ public class AdminPanelActivity extends AppCompatActivity implements CitaAdapter
         db = FirebaseFirestore.getInstance();
         tvContador = findViewById(R.id.tvContadorCitas);
         tvTituloEstado = findViewById(R.id.tvTituloAdmin);
-        rvAdmin = findViewById(R.id.rvAdmin);
+        rvAdmin = findViewById(R.id.rvAdmin);        
 
         rvAdmin.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CitaAdapter(listaCitas, this);
+        adapter = new CitaAdapter(listaCitasMostrada, this);
+        adapter.setModoAdmin(true);
         rvAdmin.setAdapter(adapter);
 
         findViewById(R.id.layoutFerminAdmin).setOnClickListener(v -> aplicarFiltro("Fermín"));
@@ -53,13 +61,99 @@ public class AdminPanelActivity extends AppCompatActivity implements CitaAdapter
             finish();
         });
 
+        obtenerNombreAdmin();
+
+        findViewById(R.id.btnBloquearAgendaAdmin).setOnClickListener(v -> mostrarDialogoBloqueo());
+
+        findViewById(R.id.btnCitaTelefonicaAdmin).setOnClickListener(v -> {
+            Intent intent = new Intent(this, CitaTelefonicaActivity.class);
+            startActivity(intent);
+        });
+        
         cargarCitasDesdeFirestore();
+    }
+
+    private void obtenerNombreAdmin() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid != null) {
+            db.collection("usuarios").document(uid).get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    adminNombre = documentSnapshot.getString("nombre");
+                }
+            });
+        }
+    }
+
+    private void mostrarDialogoBloqueo() {
+        Calendar cal = Calendar.getInstance();
+        DatePickerDialog dpd = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            String fechaSeleccionada = String.format("%02d/%02d/%04d", dayOfMonth, (month + 1), year);
+            verificarEstadoDia(fechaSeleccionada);
+        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+        dpd.setTitle("Selecciona el día");
+        dpd.show();
+    }
+
+    private void verificarEstadoDia(String fecha) {
+        String docId = fecha.replace("/", "-") + "_" + adminNombre;
+        db.collection("bloqueos").document(docId).get().addOnSuccessListener(doc -> {
+            if (doc.exists()) {
+                mostrarOpcionDesbloqueo(fecha, docId);
+            } else {
+                confirmarBloqueo(fecha);
+            }
+        });
+    }
+
+    private void mostrarOpcionDesbloqueo(String fecha, String docId) {
+        new AlertDialog.Builder(this)
+                .setTitle("Día Bloqueado")
+                .setMessage("El día " + fecha + " ya está bloqueado para ti. ¿Quieres desbloquearlo?")
+                .setPositiveButton("Desbloquear", (dialog, which) -> {
+                    db.collection("bloqueos").document(docId).delete()
+                            .addOnSuccessListener(a -> Toast.makeText(this, "Día desbloqueado con éxito", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e -> Toast.makeText(this, "Error al desbloquear", Toast.LENGTH_SHORT).show());
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void confirmarBloqueo(String fecha) {
+        new AlertDialog.Builder(this)
+                .setTitle("Bloquear Día")
+                .setMessage("¿Estás seguro de que quieres bloquear el día " + fecha + " para tu agenda (" + adminNombre + ")? Los clientes no podrán pedirte cita este día.")
+                .setPositiveButton("Bloquear", (dialog, which) -> {
+                    Map<String, Object> bloqueo = new HashMap<>();
+                    bloqueo.put("fecha", fecha);
+                    bloqueo.put("barbero", adminNombre);
+                    bloqueo.put("motivo", "Bloqueado por " + adminNombre);
+
+                    String docId = fecha.replace("/", "-") + "_" + adminNombre;
+                    db.collection("bloqueos").document(docId).set(bloqueo)
+                            .addOnSuccessListener(a -> Toast.makeText(this, "Día bloqueado con éxito", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e -> Toast.makeText(this, "Error al bloquear día", Toast.LENGTH_SHORT).show());
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void filtrarListaLocal() {
+        listaCitasMostrada.clear();
+
+        for (Cita cita : listaCitasOriginal) {
+            boolean coincideBarbero = (barberoFiltrado == null || cita.getBarbero().equals(barberoFiltrado));
+            if (coincideBarbero) {
+                listaCitasMostrada.add(cita);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        tvContador.setText("Total: " + listaCitasMostrada.size());
     }
 
     private void aplicarFiltro(String barbero) {
         this.barberoFiltrado = barbero;
         tvTituloEstado.setText(barbero == null ? "TODAS LAS CITAS" : "CITAS: " + barbero.toUpperCase());
-        cargarCitasDesdeFirestore();
+        filtrarListaLocal();
     }
 
     private void cargarCitasDesdeFirestore() {
@@ -68,53 +162,49 @@ public class AdminPanelActivity extends AppCompatActivity implements CitaAdapter
                 .orderBy("hora", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    listaCitas.clear();
+                    listaCitasOriginal.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Cita cita = document.toObject(Cita.class);
                         cita.setId(document.getId());
-
-                        if (barberoFiltrado == null || cita.getBarbero().equals(barberoFiltrado)) {
-                            listaCitas.add(cita);
-                        }
+                        listaCitasOriginal.add(cita);
                     }
-                    adapter.notifyDataSetChanged();
-                    tvContador.setText("Total: " + listaCitas.size());
+                    filtrarListaLocal();
                 })
                 .addOnFailureListener(e -> {
                     Log.e("FIRESTORE_ERROR", e.getMessage());
-                    Toast.makeText(AdminPanelActivity.this, "Error de orden/carga. Revisa el Logcat para el link del índice.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AdminPanelActivity.this, "Error de carga. Revisa los índices de Firebase.", Toast.LENGTH_LONG).show();
+                });
+    }
+
+
+    @Override
+    public void onHechoClick(int position) {
+        Cita cita = listaCitasMostrada.get(position);
+        db.collection("citas").document(cita.getId())
+                .update("estado", "HECHO")
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Cita marcada como HECHO", Toast.LENGTH_SHORT).show();
+                    cargarCitasDesdeFirestore();
                 });
     }
 
     @Override
     public void onAnularClick(int position) {
-        Cita cita = listaCitas.get(position);
-
-        LinearLayout layoutDialogo = new LinearLayout(this);
-        layoutDialogo.setOrientation(LinearLayout.VERTICAL);
-        layoutDialogo.setPadding(40, 20, 40, 20);
-
-        final EditText etMotivo = new EditText(this);
-        etMotivo.setHint("Motivo de la anulación");
-
-        final EditText etPropuesta = new EditText(this);
-        etPropuesta.setHint("Propuesta de nueva fecha (ej: Mañana 11:00)");
-
-        layoutDialogo.addView(etMotivo);
-        layoutDialogo.addView(etPropuesta);
+        Cita cita = listaCitasMostrada.get(position);
 
         new AlertDialog.Builder(this)
                 .setTitle("Anular Cita")
-                .setMessage("Se enviará un correo a " + cita.getClienteNombre())
-                .setView(layoutDialogo)
+                .setMessage("¿Estás seguro de que deseas eliminar la cita de " + cita.getClienteNombre() + "?")
                 .setPositiveButton("Confirmar", (dialog, which) -> {
-                    String motivo = etMotivo.getText().toString();
-                    String propuesta = etPropuesta.getText().toString();
 
                     db.collection("citas").document(cita.getId()).delete()
                             .addOnSuccessListener(aVoid -> {
-                                enviarNotificacionCliente(cita, "ANULADA", motivo, propuesta);
+                                Toast.makeText(this, "Cita anulada correctamente", Toast.LENGTH_SHORT).show();
+
                                 cargarCitasDesdeFirestore();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Error al anular la cita", Toast.LENGTH_SHORT).show();
                             });
                 })
                 .setNegativeButton("Cancelar", null)
@@ -123,32 +213,11 @@ public class AdminPanelActivity extends AppCompatActivity implements CitaAdapter
 
     @Override
     public void onModificarClick(int position) {
-        Cita cita = listaCitas.get(position);
-        Intent intent = new Intent(this, CalendarioActivity.class);
+        Cita cita = listaCitasMostrada.get(position);
+        Intent intent = new Intent(this, SeleccionBarberoActivity.class);
+        intent.putExtra("MODO_EDICION", true);
         intent.putExtra("CITA_ID", cita.getId());
-        intent.putExtra("BARBERO_SELECCIONADO", cita.getBarbero());
-        intent.putExtra("CLIENTE_EMAIL", cita.getClienteEmail());
-        intent.putExtra("CITA_OBJETO", cita);
-        intent.putExtra("MODO_ADMIN", true);
         startActivity(intent);
     }
 
-    private void enviarNotificacionCliente(Cita cita, String accion, String motivo, String propuesta) {
-        String cuerpoEmail = "Hola " + cita.getClienteNombre() + ",\n\n" +
-                "Tu cita ha sido " + accion + ".\n" +
-                "Motivo: " + motivo + "\n" +
-                "Te proponemos: " + propuesta + "\n\n" +
-                "Saludos, TriumBarber.";
-
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:" + cita.getClienteEmail()));
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Aviso de Cita TriumBarber");
-        intent.putExtra(Intent.EXTRA_TEXT, cuerpoEmail);
-
-        try {
-            startActivity(Intent.createChooser(intent, "Notificando al cliente..."));
-        } catch (Exception e) {
-            Toast.makeText(this, "No hay apps de correo instaladas", Toast.LENGTH_SHORT).show();
-        }
-    }
 }

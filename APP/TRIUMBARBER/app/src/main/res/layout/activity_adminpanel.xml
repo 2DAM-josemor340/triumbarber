@@ -18,6 +18,33 @@
         android:textStyle="bold"
         app:cornerRadius="8dp" />
 
+    <Button
+        android:id="@+id/btnBloquearAgendaAdmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:backgroundTint="#D4AF37"
+        android:text="BLOQUEAR AGENDA"
+        android:textColor="#000000"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:cornerRadius="8dp" />
+
+    <Button
+        android:id="@+id/btnCitaTelefonicaAdmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/btnBloquearAgendaAdmin"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="8dp"
+        android:backgroundTint="#4CAF50"
+        android:text="CITA TELEFÓNICA"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:cornerRadius="8dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,6 +71,8 @@
             android:text="Total: 0"
             android:textColor="#AAAAAA"
             android:textSize="14sp" />
+
+
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
+
 public class RecuperaPasswordActivity extends AppCompatActivity {
 
     private EditText etEmail;
@@ -39,21 +40,25 @@ public class RecuperaPasswordActivity extends AppCompatActivity {
                 return;
             }
 
-            mAuth.sendPasswordResetEmail(email)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(RecuperaPasswordActivity.this,
-                                    "Enlace enviado. Por favor, revisa tu correo electrónico.",
-                                    Toast.LENGTH_LONG).show();
-                            finish();
-                        } else {
-                            Toast.makeText(RecuperaPasswordActivity.this,
-                                    "Error: No se pudo enviar el correo. Verifica que el email sea correcto.",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
+            enviarCorreoRecuperacion(email);
         });
 
         tvVolver.setOnClickListener(v -> finish());
+    }
+
+    private void enviarCorreoRecuperacion(String email) {
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(RecuperaPasswordActivity.this,
+                                "Enlace enviado. Por favor, revisa tu correo electrónico.",
+                                Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(RecuperaPasswordActivity.this,
+                                "Error: No se pudo enviar el correo. Verifica que el email sea correcto.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }

@@ -20,6 +20,10 @@ public class SeleccionBarberoActivity extends AppCompatActivity implements CitaA
     private List<Cita> listaCitas = new ArrayList<>();
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private boolean modoEdicion = false;
+    private boolean modoTelefonico = false;
+    private String citaIdParaEditar = null;
+    private String telNombre, telApellidos, telDni, telTelefono, telEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,18 @@ public class SeleccionBarberoActivity extends AppCompatActivity implements CitaA
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
+        modoEdicion = getIntent().getBooleanExtra("MODO_EDICION", false);
+        citaIdParaEditar = getIntent().getStringExtra("CITA_ID");
+
+        modoTelefonico = getIntent().getBooleanExtra("MODO_TELEFONICO", false);
+        if (modoTelefonico) {
+            telNombre = getIntent().getStringExtra("TEL_NOMBRE");
+            telApellidos = getIntent().getStringExtra("TEL_APELLIDOS");
+            telDni = getIntent().getStringExtra("TEL_DNI");
+            telTelefono = getIntent().getStringExtra("TEL_TELEFONO");
+            telEmail = getIntent().getStringExtra("TEL_EMAIL");
+        }
 
         findViewById(R.id.btnFermin).setOnClickListener(v -> abrirCalendario("Fermín"));
         findViewById(R.id.btnJosemaria).setOnClickListener(v -> abrirCalendario("Josemaría"));
@@ -51,9 +67,22 @@ public class SeleccionBarberoActivity extends AppCompatActivity implements CitaA
     }
 
     private void abrirCalendario(String barbero) {
-        Intent intent = new Intent(this, CalendarioActivity.class);
+        Intent intent = new Intent(this, SeleccionServicioActivity.class);
         intent.putExtra("BARBERO_SELECCIONADO", barbero);
+        if (modoEdicion) {
+            intent.putExtra("CITA_ID", citaIdParaEditar);
+            intent.putExtra("MODO_EDICION", true);
+        }
+        if (modoTelefonico) {
+            intent.putExtra("MODO_TELEFONICO", true);
+            intent.putExtra("TEL_NOMBRE", telNombre);
+            intent.putExtra("TEL_APELLIDOS", telApellidos);
+            intent.putExtra("TEL_DNI", telDni);
+            intent.putExtra("TEL_TELEFONO", telTelefono);
+            intent.putExtra("TEL_EMAIL", telEmail);
+        }
         startActivity(intent);
+        if (modoEdicion || modoTelefonico) finish();
     }
 
     private void cargarCitasPendientes() {
@@ -97,10 +126,9 @@ public class SeleccionBarberoActivity extends AppCompatActivity implements CitaA
     @Override
     public void onModificarClick(int position) {
         Cita cita = listaCitas.get(position);
-        Intent intent = new Intent(this, CalendarioActivity.class);
+        Intent intent = new Intent(this, SeleccionBarberoActivity.class);
+        intent.putExtra("MODO_EDICION", true);
         intent.putExtra("CITA_ID", cita.getId());
-        intent.putExtra("BARBERO_SELECCIONADO", cita.getBarbero());
-        intent.putExtra("CITA_OBJETO", cita);
         startActivity(intent);
     }
 }

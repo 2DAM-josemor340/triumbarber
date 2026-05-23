@@ -27,10 +27,12 @@
         <activity android:name=".RegistroActivity" />
         <activity android:name=".RecuperaPasswordActivity" android:label="Recuperar Contraseña" />
         <activity android:name=".SeleccionBarberoActivity" />
+        <activity android:name=".SeleccionServicioActivity" />
         <activity android:name=".CalendarioActivity" />
         <activity android:name=".AdminPanelActivity" />
         <activity android:name=".HistoricoActivity" />
         <activity android:name=".ConfirmacionActivity" />
+        <activity android:name=".CitaTelefonicaActivity" />
 
     </application>
 
