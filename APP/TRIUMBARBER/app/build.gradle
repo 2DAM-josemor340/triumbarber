@@ -7,7 +7,7 @@ plugins {
 android {
     namespace 'com.triumbarber'
 
-    // CORRECCIÓN: Subimos a 36 para compatibilidad con librerías AndroidX 1.12.2
+    // Subimos a 36 para compatibilidad con librerías AndroidX 1.12.2
     compileSdk 36
 
     defaultConfig {
