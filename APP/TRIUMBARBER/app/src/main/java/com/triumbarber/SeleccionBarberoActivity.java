@@ -99,7 +99,9 @@ public class SeleccionBarberoActivity extends AppCompatActivity implements CitaA
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Cita cita = doc.toObject(Cita.class);
                         cita.setId(doc.getId());
-                        listaCitas.add(cita);
+                        if (cita.getEstado() == null || !cita.getEstado().equalsIgnoreCase("HECHO")) {
+                            listaCitas.add(cita);
+                        }
                     }
                     adapter.notifyDataSetChanged();
                 })

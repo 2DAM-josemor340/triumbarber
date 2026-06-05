@@ -142,7 +142,8 @@ public class AdminPanelActivity extends AppCompatActivity implements CitaAdapter
 
         for (Cita cita : listaCitasOriginal) {
             boolean coincideBarbero = (barberoFiltrado == null || cita.getBarbero().equals(barberoFiltrado));
-            if (coincideBarbero) {
+            boolean esPendiente = cita.getEstado() != null && !cita.getEstado().equalsIgnoreCase("HECHO");
+            if (coincideBarbero && esPendiente) {
                 listaCitasMostrada.add(cita);
             }
         }
@@ -213,11 +214,6 @@ public class AdminPanelActivity extends AppCompatActivity implements CitaAdapter
 
     @Override
     public void onModificarClick(int position) {
-        Cita cita = listaCitasMostrada.get(position);
-        Intent intent = new Intent(this, SeleccionBarberoActivity.class);
-        intent.putExtra("MODO_EDICION", true);
-        intent.putExtra("CITA_ID", cita.getId());
-        startActivity(intent);
     }
 
 }

@@ -61,7 +61,7 @@ dependencies {
 
     // --- FIREBASE SETTINGS ---
     // Usamos el BoM para gestionar versiones compatibles entre sí automáticamente
-    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation platform('com.google.firebase:firebase-bom:34.14.0')
 
     // Dependencias de Firebase (Auth para login y Firestore para base de datos)
     implementation 'com.google.firebase:firebase-auth'
