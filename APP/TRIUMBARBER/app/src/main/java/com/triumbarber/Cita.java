@@ -20,9 +20,9 @@ public class Cita implements Serializable {
     public Cita() {}
 
     public String getId() { return id; }
-    
+
     public void setId(String id) { this.id = id; }
-    
+
     public String getObservaciones() { return observaciones; }
 
     public void setObservaciones(String observaciones) { this.observaciones = observaciones; }

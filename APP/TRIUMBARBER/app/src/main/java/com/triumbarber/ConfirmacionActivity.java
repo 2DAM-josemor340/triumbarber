@@ -70,7 +70,7 @@ public class ConfirmacionActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String notaStr = s.toString().trim();
                 actualizarResumen(notaStr);
-                
+
                 if (notaStr.isEmpty()) {
                     tvNotaLabel.setText("Nota: -");
                 } else {
@@ -90,11 +90,11 @@ public class ConfirmacionActivity extends AppCompatActivity {
                 "Servicio: " + servicio + "\n" +
                 "Fecha: " + fecha + "\n" +
                 "Hora: " + hora;
-        
+
         if (!nota.isEmpty()) {
             resumen += "\nNota: " + nota;
         }
-        
+
         tvResumen.setText(resumen);
     }
 

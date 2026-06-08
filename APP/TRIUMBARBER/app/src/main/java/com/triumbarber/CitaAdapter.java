@@ -12,22 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-
 public class CitaAdapter extends RecyclerView.Adapter<CitaAdapter.CitaVH> {
     private List<Cita> citas;
     private OnCitaListener listener;
     private boolean esModoAdmin = false;
 
-
     public interface OnCitaListener {
         void onAnularClick(int p);
-
         void onModificarClick(int p);
-
-        default void onHechoClick(int p) {
-        }
+        default void onHechoClick(int p) {}
     }
-
 
     public CitaAdapter(List<Cita> citas, OnCitaListener listener) {
         this.citas = citas;
@@ -38,7 +32,6 @@ public class CitaAdapter extends RecyclerView.Adapter<CitaAdapter.CitaVH> {
         this.esModoAdmin = esModoAdmin;
     }
 
-
     @NonNull
     @Override
     public CitaVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -46,55 +39,93 @@ public class CitaAdapter extends RecyclerView.Adapter<CitaAdapter.CitaVH> {
         return new CitaVH(v);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull CitaVH h, int position) {
-        Cita c = citas.get(position);
+        Cita cita = citas.get(position);
 
-        String fechaVisible = formatearFecha(c.getFecha());
-        h.txtFecha.setText(fechaVisible + " - " + c.getHora());
+        String horaInicio = cita.getHora();
+        String horaFin = horaInicio;
 
-        String nombre = (c.getClienteNombre() != null) ? c.getClienteNombre() : "";
-        String apellidos = (c.getClienteApellidos() != null) ? c.getClienteApellidos() : "";
-        String nombreFull = (nombre + " " + apellidos).trim();
-        h.txtNombre.setText(nombreFull.isEmpty() ? "Cliente Desconocido" : nombreFull);
+        try {
+            String[] partes = horaInicio.split(":");
+            int horaEntera = Integer.parseInt(partes[0]);
+            int minutos = Integer.parseInt(partes[1]);
 
-        h.txtBarbero.setText("Barbero: " + (c.getBarbero() != null ? c.getBarbero() : "N/A"));
-        h.txtServicio.setText("Servicio: " + (c.getServicio() != null ? c.getServicio() : "No especificado"));
-        h.txtEmail.setText(c.getClienteEmail());
-        h.txtTelefono.setText("Tel: " + (c.getClienteTelefono() != null ? c.getClienteTelefono() : "N/A"));
+            if ("Corte+Barba".equalsIgnoreCase(cita.getServicio())) {
+                minutos += 60;
+            } else if ("Decoloracion".equalsIgnoreCase(cita.getServicio())) {
+                minutos += 120;
+            } else {
+                minutos += 30;
+            }
 
-        if (c.getObservaciones() != null && !c.getObservaciones().isEmpty()) {
-            h.txtNotas.setVisibility(View.VISIBLE);
-            h.txtNotas.setText("Nota: " + c.getObservaciones());
+            if (minutos >= 60) {
+                horaEntera += (minutos / 60);
+                minutos = (minutos % 60);
+            }
+
+            String stringMinutos = minutos == 0 ? "00" : String.valueOf(minutos);
+            horaFin = horaEntera + ":" + stringMinutos;
+        } catch (Exception e) {}
+
+        String textoFechaHora = formatearFecha(cita.getFecha()) + " | " + horaInicio + " a " + horaFin;
+        h.txtFecha.setText(textoFechaHora);
+
+        h.txtBarbero.setText("Barbero: " + cita.getBarbero());
+        h.txtServicio.setText("Servicio: " + cita.getServicio());
+        h.txtNotas.setText(cita.getObservaciones() != null && !cita.getObservaciones().isEmpty() ? "Notas: " + cita.getObservaciones() : "Sin observaciones");
+
+        if (cita.getClienteNombre() != null) {
+            h.txtNombre.setText("Cliente: " + cita.getClienteNombre() + " " + cita.getClienteApellidos());
+            h.txtEmail.setText("Email: " + cita.getClienteEmail());
+            h.txtTelefono.setText("Tlf: " + cita.getClienteTelefono());
+            h.txtNombre.setVisibility(View.VISIBLE);
+            h.txtEmail.setVisibility(View.VISIBLE);
+            h.txtTelefono.setVisibility(View.VISIBLE);
         } else {
-            h.txtNotas.setVisibility(View.GONE);
+            h.txtNombre.setVisibility(View.GONE);
+            h.txtEmail.setVisibility(View.GONE);
+            h.txtTelefono.setVisibility(View.GONE);
         }
 
-        String estado = c.getEstado() != null ? c.getEstado().toUpperCase() : "PENDIENTE";
-        if (estado.equals("HECHO")) {
-            h.txtEstado.setText("HECHO");
-            h.txtEstado.setBackgroundColor(Color.parseColor("#4CAF50"));
+        if ("HECHO".equalsIgnoreCase(cita.getEstado())) {
+            h.txtEstado.setText("FINALIZADA");
+            h.txtEstado.setBackgroundColor(Color.parseColor("#2E7D32"));
             h.btnHecho.setVisibility(View.GONE);
             h.btnAnular.setVisibility(View.GONE);
             h.btnModificar.setVisibility(View.GONE);
         } else {
             h.txtEstado.setText("PENDIENTE");
-            h.txtEstado.setBackgroundColor(Color.parseColor("#444444"));
-            h.btnHecho.setVisibility(esModoAdmin ? View.VISIBLE : View.GONE);
-            h.btnAnular.setVisibility(View.VISIBLE);
-            h.btnModificar.setVisibility(esModoAdmin ? View.GONE : View.VISIBLE);
+            h.txtEstado.setBackgroundColor(Color.parseColor("#424242"));
+
+            if (esModoAdmin) {
+                h.btnHecho.setVisibility(View.VISIBLE);
+                h.btnModificar.setVisibility(View.GONE);
+                h.btnAnular.setVisibility(View.VISIBLE);
+            } else {
+                h.btnHecho.setVisibility(View.GONE);
+                h.btnModificar.setVisibility(View.VISIBLE);
+                h.btnAnular.setVisibility(View.VISIBLE);
+            }
         }
 
-        if (listener != null) {
-            h.btnAnular.setOnClickListener(v -> listener.onAnularClick(h.getAdapterPosition()));
-            h.btnModificar.setOnClickListener(v -> listener.onModificarClick(h.getAdapterPosition()));
-            h.btnHecho.setOnClickListener(v -> listener.onHechoClick(h.getAdapterPosition()));
-        } else {
-            h.btnAnular.setVisibility(View.GONE);
-            h.btnModificar.setVisibility(View.GONE);
-            h.btnHecho.setVisibility(View.GONE);
-        }
+        h.btnAnular.setOnClickListener(v -> {
+            if (listener != null && h.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                listener.onAnularClick(h.getAdapterPosition());
+            }
+        });
+
+        h.btnModificar.setOnClickListener(v -> {
+            if (listener != null && h.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                listener.onModificarClick(h.getAdapterPosition());
+            }
+        });
+
+        h.btnHecho.setOnClickListener(v -> {
+            if (listener != null && h.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                listener.onHechoClick(h.getAdapterPosition());
+            }
+        });
     }
 
     public static String formatearFecha(String fecha) {

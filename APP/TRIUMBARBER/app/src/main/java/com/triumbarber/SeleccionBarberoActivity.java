@@ -35,8 +35,8 @@ public class SeleccionBarberoActivity extends AppCompatActivity implements CitaA
 
         modoEdicion = getIntent().getBooleanExtra("MODO_EDICION", false);
         citaIdParaEditar = getIntent().getStringExtra("CITA_ID");
-
         modoTelefonico = getIntent().getBooleanExtra("MODO_TELEFONICO", false);
+
         if (modoTelefonico) {
             telNombre = getIntent().getStringExtra("TEL_NOMBRE");
             telApellidos = getIntent().getStringExtra("TEL_APELLIDOS");
@@ -45,33 +45,30 @@ public class SeleccionBarberoActivity extends AppCompatActivity implements CitaA
             telEmail = getIntent().getStringExtra("TEL_EMAIL");
         }
 
-        findViewById(R.id.btnFermin).setOnClickListener(v -> abrirCalendario("Fermín"));
-        findViewById(R.id.btnJosemaria).setOnClickListener(v -> abrirCalendario("Josemaría"));
+        rvCitasPendientes = findViewById(R.id.rvCitasUsuario);
+        rvCitasPendientes.setLayoutManager(new LinearLayoutManager(this));
 
+        adapter = new CitaAdapter(listaCitas, this);
+        adapter.setModoAdmin(false);
+        rvCitasPendientes.setAdapter(adapter);
+
+        findViewById(R.id.btnFermin).setOnClickListener(v -> irASeleccionServicio("Fermín"));
+        findViewById(R.id.btnJosemaria).setOnClickListener(v -> irASeleccionServicio("Josemaría"));
         findViewById(R.id.btnVerHistorico).setOnClickListener(v -> {
             startActivity(new Intent(this, HistoricoActivity.class));
         });
 
         findViewById(R.id.btnCerrarSesion).setOnClickListener(v -> {
-            mAuth.signOut();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+            FirebaseAuth.getInstance().signOut(); startActivity(new Intent(this, LoginActivity.class)); finish();
         });
-
-        rvCitasPendientes = findViewById(R.id.rvCitasUsuario);
-        rvCitasPendientes.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CitaAdapter(listaCitas, this);
-        rvCitasPendientes.setAdapter(adapter);
-
-        cargarCitasPendientes();
     }
 
-    private void abrirCalendario(String barbero) {
+    private void irASeleccionServicio(String barbero) {
         Intent intent = new Intent(this, SeleccionServicioActivity.class);
         intent.putExtra("BARBERO_SELECCIONADO", barbero);
         if (modoEdicion) {
-            intent.putExtra("CITA_ID", citaIdParaEditar);
             intent.putExtra("MODO_EDICION", true);
+            intent.putExtra("CITA_ID", citaIdParaEditar);
         }
         if (modoTelefonico) {
             intent.putExtra("MODO_TELEFONICO", true);
@@ -82,7 +79,6 @@ public class SeleccionBarberoActivity extends AppCompatActivity implements CitaA
             intent.putExtra("TEL_EMAIL", telEmail);
         }
         startActivity(intent);
-        if (modoEdicion || modoTelefonico) finish();
     }
 
     private void cargarCitasPendientes() {
@@ -96,11 +92,26 @@ public class SeleccionBarberoActivity extends AppCompatActivity implements CitaA
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     listaCitas.clear();
+
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Cita cita = doc.toObject(Cita.class);
                         cita.setId(doc.getId());
+
                         if (cita.getEstado() == null || !cita.getEstado().equalsIgnoreCase("HECHO")) {
-                            listaCitas.add(cita);
+
+                            boolean yaAgrupada = false;
+                            for (Cita mostrada : listaCitas) {
+                                if (mostrada.getFecha().equals(cita.getFecha()) &&
+                                        mostrada.getServicio().equals(cita.getServicio())) {
+
+                                    yaAgrupada = true;
+                                    break;
+                                }
+                            }
+
+                            if (!yaAgrupada) {
+                                listaCitas.add(cita);
+                            }
                         }
                     }
                     adapter.notifyDataSetChanged();
