@@ -191,7 +191,6 @@ public class CalendarioActivity extends AppCompatActivity {
             String siguienteHora = horasBase.get(index + 1);
             return !horasOcupadas.contains(siguienteHora);
         } else if ("Decoloracion".equals(servicioSeleccionado)) {
-            // Bloque 1 y 2 (actual y +1)
             if (index + 1 >= horasBase.size()) return false;
             if (horasOcupadas.contains(horasBase.get(index + 1))) return false;
             if (index + 5 >= horasBase.size()) return false;
